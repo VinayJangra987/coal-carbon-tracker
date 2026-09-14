@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #14181c;
+  background-image: radial-gradient(circle at 15% 0%, rgba(232, 150, 74, 0.07), transparent 40%),
+    radial-gradient(circle at 85% 100%, rgba(79, 157, 105, 0.07), transparent 45%);
+  color: #edeff2;
+  font-family: "Inter", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a3138;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card {
+  background-color: #1b2126;
+  border: 1px solid #2a3138;
+  border-radius: 14px;
+}
+
+.btn-primary {
+  background-color: #e8964a;
+  color: #14181c;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.6rem 1.1rem;
+  transition: background-color 0.15s ease;
+}
+.btn-primary:hover {
+  background-color: #c97430;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid #2a3138;
+  color: #edeff2;
+  border-radius: 10px;
+  padding: 0.6rem 1.1rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.btn-secondary:hover {
+  border-color: #4f9d69;
+  background-color: rgba(79, 157, 105, 0.08);
+}
+
+.input-field {
+  background-color: #0f1215;
+  border: 1px solid #2a3138;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  color: #edeff2;
+  width: 100%;
+  font-family: "Inter", sans-serif;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #e8964a;
+}
+
+.label {
+  color: #8b95a1;
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+  display: block;
+}
