@@ -325,7 +325,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-anthracite">
          <Sidebar />
-       <main className="flex-1 p-4 md:p-8">
+         <main className="flex-1 p-4 md:p-8">
         {/* ---- Hero Banner ---- */}
         <div className="card-premium relative mb-8 overflow-hidden">
           <img
@@ -354,7 +354,7 @@ export default function Dashboard() {
 
         {summary && (
           <>
-            <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
               <StatCard
                 label="Total Emissions"
                 value={Math.round(summary.totals.total).toLocaleString()}
