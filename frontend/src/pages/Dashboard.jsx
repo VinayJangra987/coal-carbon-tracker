@@ -323,9 +323,9 @@ export default function Dashboard() {
       : null;
 
   return (
-    <div className="flex min-h-screen bg-anthracite">
-      <Sidebar />
-      <main className="flex-1 p-8">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-anthracite">
+         <Sidebar />
+       <main className="flex-1 p-4 md:p-8">
         {/* ---- Hero Banner ---- */}
         <div className="card-premium relative mb-8 overflow-hidden">
           <img
