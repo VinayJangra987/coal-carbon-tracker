@@ -12,4 +12,4 @@ router.get("/", protect, getAlerts);
 router.post("/generate/:mineId", protect, generateMineAlerts);
 router.put("/:id/acknowledge", protect, acknowledgeAlert);
 
-export default router;
+export default router;  

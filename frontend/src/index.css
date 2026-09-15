@@ -1,7 +1,6 @@
-@tailwind base;
+ @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 * {
   box-sizing: border-box;
 }
@@ -86,9 +85,42 @@ h4,
   border-color: #e8964a;
 }
 
+
+.card {
+  background-color: #1b2126;
+  border: 1px solid #2a3138;
+  border-radius: 14px;
+}
+
+.card-premium {
+  position: relative;
+  background: linear-gradient(180deg, rgba(27, 33, 38, 0.9), rgba(27, 33, 38, 0.6));
+  border: 1px solid #2a3138;
+  border-radius: 18px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.card-premium:hover {
+  border-color: #3a434b;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.stat-card {
+  isolation: isolate;
+}
+.stat-card-glow {
+  position: absolute;
+  inset: -40% -40% auto auto;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, var(--glow), transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
 .label {
   color: #8b95a1;
   font-size: 0.8rem;
   margin-bottom: 0.3rem;
   display: block;
-}
+} 

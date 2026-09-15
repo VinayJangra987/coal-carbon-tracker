@@ -38,7 +38,6 @@ export const register = async (req, res) => {
         message: "Email already registered",
       });
     }
-
     const user = await User.create({
       name,
       email,
