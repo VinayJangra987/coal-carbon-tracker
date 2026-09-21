@@ -84,13 +84,26 @@
 
 
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { useCountUp } from "../hooks/useCountUp";
 
-export default function StatCard({ label, value, unit, accent = "ember", trend, sparkline }) {
+export default function StatCard({
+  label,
+  value,       // fallback: already-formatted string, shown if rawValue not given
+  rawValue,    // optional: plain number, enables count-up animation
+  unit,
+  accent = "ember",
+  trend,
+  sparkline,
+}) {
   const accentColor = accent === "neutral" ? "text-neutral" : "text-ember";
   const accentStroke = accent === "neutral" ? "#4F9D69" : "#E8964A";
   const glowColor = accent === "neutral" ? "rgba(79,157,105,0.12)" : "rgba(232,150,74,0.12)";
 
   const isUp = typeof trend === "number" && trend >= 0;
+  const animated = useCountUp(typeof rawValue === "number" ? rawValue : null);
+
+  const displayValue =
+    typeof rawValue === "number" ? Math.round(animated).toLocaleString() : value;
 
   const sparkPath = (() => {
     if (!sparkline || sparkline.length < 2) return null;
@@ -111,7 +124,6 @@ export default function StatCard({ label, value, unit, accent = "ember", trend, 
     >
       <div className="stat-card-glow" />
 
-      {/* label + sparkline stack on very small cards, row on wider ones */}
       <div className="flex items-start justify-between gap-2">
         <p className="text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.14em] text-ash leading-tight">
           {label}
@@ -137,7 +149,7 @@ export default function StatCard({ label, value, unit, accent = "ember", trend, 
       </div>
 
       <p className={`mt-2 font-display text-xl sm:text-3xl font-semibold ${accentColor}`}>
-        {value}
+        {displayValue}
         <span className="ml-1.5 text-xs sm:text-sm font-normal text-ash">{unit}</span>
       </p>
 

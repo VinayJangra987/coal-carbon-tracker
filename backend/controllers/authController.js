@@ -18,7 +18,7 @@ const sanitize = (user) => ({
   mine: user.mine,
 });
 
-// POST /api/auth/register
+// POST /api/auth/register new user
 export const register = async (req, res) => {
   try {
     const { name, email, password, role, mine } = req.body;

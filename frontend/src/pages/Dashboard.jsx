@@ -258,9 +258,8 @@
 // }
 
 
-
-
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -277,8 +276,10 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { Bell, AlertTriangle } from "lucide-react";
 import Sidebar from "../components/Sidebar.jsx";
 import StatCard from "../components/StatCard.jsx";
+import { StatCardSkeleton, ChartCardSkeleton, HeroSkeleton } from "../components/Skeleton.jsx";
 import api from "../utils/api";
 
 const SCOPE_COLORS = ["#E8964A", "#4F9D69", "#8B95A1"];
@@ -286,11 +287,17 @@ const SCOPE_COLORS = ["#E8964A", "#4F9D69", "#8B95A1"];
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
+  const [lastSynced, setLastSynced] = useState(null);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
       .get("/dashboard/summary")
-      .then((res) => setSummary(res.data))
+      .then((res) => {
+        setSummary(res.data);
+        setLastSynced(new Date());
+      })
       .catch((err) => setError(err.response?.data?.message || "Failed to load summary"));
   }, []);
 
@@ -308,11 +315,9 @@ export default function Dashboard() {
     total: Math.round(m.total),
   })) || [];
 
-  // sparkline arrays for stat cards (last 6 trend points)
   const trendValues = trendData.map((t) => t.total);
   const spark = (slice) => trendValues.slice(-6).map(slice);
 
-  // simple % change vs previous period for the "Total Emissions" trend arrow
   const totalTrendPct =
     trendValues.length >= 2
       ? Math.round(
@@ -322,65 +327,169 @@ export default function Dashboard() {
         ) / 10
       : null;
 
+  // number of active/unresolved alerts, if backend provides it — falls back to 0
+  const activeAlerts = summary?.activeAlerts ?? summary?.alertsCount ?? 0;
+  // recent alerts list for the dropdown preview — adjust field name to match your API
+  const recentAlerts = summary?.recentAlerts ?? summary?.alerts ?? [];
+
+  const timeAgo = (date) => {
+    if (!date) return "";
+    const secs = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (secs < 60) return "just now";
+    const mins = Math.floor(secs / 60);
+    if (mins < 60) return `${mins} min${mins > 1 ? "s" : ""} ago`;
+    const hrs = Math.floor(mins / 60);
+    return `${hrs} hr${hrs > 1 ? "s" : ""} ago`;
+  };
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-anthracite">
-         <Sidebar />
-         <main className="flex-1 p-4 md:p-8">
-        {/* ---- Hero Banner ---- */}
-        <div className="card-premium relative mb-8 overflow-hidden">
-          <img
-            src="/images/Coal.jpg"
-            alt="Coal mining operations"
-            className="h-56 w-full object-cover md:h-64"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-anthracite via-anthracite/70 to-anthracite/10" />
-          <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-            <p className="text-xs uppercase tracking-[0.18em] text-ember">Ministry of Coal</p>
-            <h1 className="mt-2 font-display text-3xl font-semibold text-chalk md:text-4xl">
-              National Overview
-            </h1>
-            <p className="mt-2 text-sm text-ash">
-              Aggregated emissions across{" "}
-              <span className="text-chalk">{summary?.totalMines ?? "—"}</span> tracked mines
-            </p>
+      <Sidebar />
+      <main className="flex-1 p-4 md:p-8">
+        {/* ---- Utility bar: last synced + notification bell ---- */}
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-xs text-ash">
+            {summary ? `Last synced: ${timeAgo(lastSynced)}` : "Syncing…"}
+          </p>
+
+          <div className="relative">
+            <button
+              onClick={() => setNotifOpen((o) => !o)}
+              className="relative p-2 rounded-lg text-ash hover:bg-panel hover:text-chalk transition-colors"
+              aria-label="Notifications"
+            >
+              <Bell size={18} />
+              {activeAlerts > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                  {activeAlerts > 9 ? "9+" : activeAlerts}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <>
+                {/* backdrop to close on outside click */}
+                <div className="fixed inset-0 z-40" onClick={() => setNotifOpen(false)} />
+
+                <div className="absolute right-0 z-50 mt-2 w-72 rounded-xl border border-line bg-seam shadow-xl overflow-hidden">
+                  <div className="px-4 py-3 border-b border-line flex items-center justify-between">
+                    <p className="text-sm font-medium text-chalk">Notifications</p>
+                    {activeAlerts > 0 && (
+                      <span className="text-[10px] text-ash">{activeAlerts} active</span>
+                    )}
+                  </div>
+
+                  {recentAlerts.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-xs text-ash">
+                      No new alerts
+                    </div>
+                  ) : (
+                    <div className="max-h-64 overflow-y-auto divide-y divide-line/60">
+                      {recentAlerts.slice(0, 4).map((alert, i) => (
+                        <div key={alert._id || i} className="flex gap-3 px-4 py-3 hover:bg-panel/50">
+                          <AlertTriangle size={15} className="mt-0.5 shrink-0 text-ember" />
+                          <div className="min-w-0">
+                            <p className="text-xs text-chalk truncate">
+                              {alert.message || alert.title || "New alert"}
+                            </p>
+                            <p className="mt-0.5 text-[10px] text-ash truncate">
+                              {alert.mineName || alert.createdAt || ""}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setNotifOpen(false);
+                      navigate("/alerts");
+                    }}
+                    className="w-full px-4 py-2.5 text-xs font-medium text-ember hover:bg-panel/50 border-t border-line"
+                  >
+                    View all alerts
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
-            {error}
+        {/* ---- Hero Banner ---- */}
+        {!summary && !error ? (
+          <HeroSkeleton />
+        ) : (
+          <div className="card-premium relative mb-8 overflow-hidden">
+            <img
+              src="/images/Coal.jpg"
+              alt="Coal mining operations"
+              className="h-56 w-full object-cover md:h-64"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-anthracite via-anthracite/70 to-anthracite/10" />
+            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+              <p className="text-xs uppercase tracking-[0.18em] text-ember">Ministry of Coal</p>
+              <h1 className="mt-2 font-display text-3xl font-semibold text-chalk md:text-4xl">
+                National Overview
+              </h1>
+              <p className="mt-2 text-sm text-ash">
+                Aggregated emissions across{" "}
+                <span className="text-chalk">{summary?.totalMines ?? "—"}</span> tracked mines
+              </p>
+            </div>
           </div>
         )}
 
-        {summary && (
+        {error && (
+          <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300 flex items-center justify-between">
+            <span>{error}</span>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-xs font-medium underline decoration-red-400/50 hover:text-red-200"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* ---- Stat cards ---- */}
+        {!summary && !error ? (
+          <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </div>
+        ) : summary && (
           <>
             <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
               <StatCard
                 label="Total Emissions"
-                value={Math.round(summary.totals.total).toLocaleString()}
+                rawValue={Math.round(summary.totals.total)}
                 unit="t CO2e"
                 trend={totalTrendPct}
                 sparkline={spark((t) => t)}
               />
               <StatCard
                 label="Scope 1 (Direct)"
-                value={Math.round(summary.totals.scope1).toLocaleString()}
+                rawValue={Math.round(summary.totals.scope1)}
                 unit="t CO2e"
               />
               <StatCard
                 label="Scope 2 (Electricity)"
-                value={Math.round(summary.totals.scope2).toLocaleString()}
+                rawValue={Math.round(summary.totals.scope2)}
                 unit="t CO2e"
               />
               <StatCard
                 label="Scope 3 (Transport)"
-                value={Math.round(summary.totals.scope3).toLocaleString()}
+                rawValue={Math.round(summary.totals.scope3)}
                 unit="t CO2e"
                 accent="neutral"
               />
             </div>
 
-            <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* ---- Charts row ---- */}
+            <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
               <div className="card-premium p-6 lg:col-span-2">
                 <div className="mb-5 flex items-center justify-between">
                   <h3 className="font-display text-base text-chalk">Emissions Trend</h3>
@@ -400,21 +509,10 @@ export default function Dashboard() {
                     <XAxis dataKey="period" stroke="#8B95A1" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#8B95A1" fontSize={12} tickLine={false} axisLine={false} />
                     <Tooltip
-                      contentStyle={{
-                        background: "#1B2126",
-                        border: "1px solid #2A3138",
-                        borderRadius: 12,
-                      }}
+                      contentStyle={{ background: "#1B2126", border: "1px solid #2A3138", borderRadius: 12 }}
                       labelStyle={{ color: "#EDEFF2" }}
                     />
-                    {/* gradient fill under the line */}
-                    <Area
-                      type="monotone"
-                      dataKey="total"
-                      stroke="none"
-                      fill="url(#trendGlow)"
-                      isAnimationActive={true}
-                    />
+                    <Area type="monotone" dataKey="total" stroke="none" fill="url(#trendGlow)" isAnimationActive />
                     <Line
                       type="monotone"
                       dataKey="total"
@@ -451,8 +549,6 @@ export default function Dashboard() {
                       <Legend wrapperStyle={{ fontSize: 12, color: "#8B95A1" }} iconType="circle" />
                     </PieChart>
                   </ResponsiveContainer>
-
-                  {/* center label overlay */}
                   <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center pb-8">
                     <p className="font-display text-lg font-semibold text-chalk">
                       {Math.round(summary.totals.total / 1000).toLocaleString()}k
@@ -485,7 +581,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
 
-            {/* ---- Stat Strip / Overview / Insights (GEM-style) ---- */}
+            {/* ---- Stat Strip / Overview / Insights ---- */}
             <div className="mt-8 space-y-8">
               <div className="card-premium overflow-hidden">
                 <div className="grid grid-cols-2 divide-x divide-line/60 md:grid-cols-4">
@@ -501,7 +597,7 @@ export default function Dashboard() {
                       value: summary.avgRenewableShare != null ? `${summary.avgRenewableShare}%` : "—",
                     },
                   ].map((stat) => (
-                    <div key={stat.label} className="p-5">
+                    <div key={stat.label} className="p-3 sm:p-5">
                       <p className="font-display text-2xl font-semibold text-ember">{stat.value}</p>
                       <p className="mt-1 text-xs uppercase tracking-[0.12em] text-ash">{stat.label}</p>
                     </div>
@@ -545,6 +641,16 @@ export default function Dashboard() {
               </div>
             </div>
           </>
+        )}
+
+        {/* charts skeleton while loading (only if no summary and no error yet) */}
+        {!summary && !error && (
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
+            <div className="lg:col-span-2">
+              <ChartCardSkeleton />
+            </div>
+            <ChartCardSkeleton />
+          </div>
         )}
       </main>
     </div>

@@ -47,27 +47,41 @@ export default function MineDetail() {
   // };
 
 
-  const handleSubmit = async (e) => {
+//   const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     await api.post("/emissions", form);
+
+//     setForm({
+//       dieselLitres: "",
+//       explosivesKg: "",
+//       coalProductionTonnes: "",
+//       gridElectricityKWh: "",
+//       renewableElectricityKWh: "",
+//       coalTransportedTonneKm: "",
+//       notes: "",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+const handleSubmit = async (e) => {
   e.preventDefault();
+  setError("");
 
   try {
-    await api.post("/emissions", form);
+    await api.post("/emissions", { ...form, mine: id });   
 
-    setForm({
-      dieselLitres: "",
-      explosivesKg: "",
-      coalProductionTonnes: "",
-      gridElectricityKWh: "",
-      renewableElectricityKWh: "",
-      coalTransportedTonneKm: "",
-      notes: "",
-    });
-  } catch (error) {
-    console.error(error);
+    setForm(emptyForm);  
+    setShowForm(false);
+    load();             
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to save record");
+    console.error(err);
   }
 };
-
-
 
   const chartData = records.map((r) => ({
     period: r.period,
