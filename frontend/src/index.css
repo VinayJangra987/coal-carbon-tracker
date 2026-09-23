@@ -1,6 +1,31 @@
- @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ---------- Dark theme (default) ---------- */
+:root {
+  --color-anthracite: #F5F6F7;
+  --color-seam: #FFFFFF;
+  --color-panel: #EDEFF2;
+  --color-ember: #C97430;
+  --color-neutral: #3C7B51;
+  --color-ash: #5C6672;
+  --color-chalk: #14181C;
+  --color-line: #DDE1E6;
+}
+
+.dark {
+  --color-anthracite: #14181C;
+  --color-seam: #0F1215;
+  --color-panel: #1B2126;
+  --color-ember: #E8964A;
+  --color-neutral: #4F9D69;
+  --color-ash: #8B95A1;
+  --color-chalk: #EDEFF2;
+  --color-line: #2A3138;
+}
+/* 
+
 * {
   box-sizing: border-box;
 }
@@ -123,4 +148,4 @@ h4,
   font-size: 0.8rem;
   margin-bottom: 0.3rem;
   display: block;
-} 
+}  */

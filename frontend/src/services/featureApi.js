@@ -18,6 +18,14 @@ featureApiClient.interceptors.request.use((config) => {
 });
 
 export const featureApi = {
+
+
+   getMines: async () => {
+    const response = await featureApiClient.get("/mines");
+    return response.data;
+  },
+
+  
   // =========================
   // Carbon Targets
   // =========================

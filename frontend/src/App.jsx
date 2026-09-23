@@ -1,59 +1,3 @@
-// import { Routes, Route, Navigate } from "react-router-dom";
-// import Login from "./pages/Login.jsx";
-// import Register from "./pages/Register.jsx";
-// import Dashboard from "./pages/Dashboard.jsx";
-// import Mines from "./pages/Mines.jsx";
-// import MineDetail from "./pages/MineDetail.jsx";
-// import PathwayPlanner from "./pages/PathwayPlanner.jsx";
-// import ProtectedRoute from "./components/ProtectedRoute.jsx";
-
-// export default function App() {
-//   return (
-//     <Routes>
-//       <Route path="/login" element={<Login />} />
-//       <Route path="/register" element={<Register />} />
-
-//       <Route
-//         path="/dashboard"
-//         element={
-//           <ProtectedRoute>
-//             <Dashboard />
-//           </ProtectedRoute>
-//         }
-//       />
-//       <Route
-//         path="/mines"
-//         element={
-//           <ProtectedRoute>
-//             <Mines />
-//           </ProtectedRoute>
-//         }
-//       />
-//       <Route
-//         path="/mines/:id"
-//         element={
-//           <ProtectedRoute>
-//             <MineDetail />
-//           </ProtectedRoute>
-//         }
-//       />
-//       <Route
-//         path="/pathway"
-//         element={
-//           <ProtectedRoute>
-//             <PathwayPlanner />
-//           </ProtectedRoute>
-//         }
-//       />
-
-//       <Route path="/" element={<Navigate to="/dashboard" replace />} />
-//       <Route path="*" element={<Navigate to="/dashboard" replace />} />
-//     </Routes>
-//   );
-// }
-
-
-
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login.jsx";
@@ -72,17 +16,16 @@ import CarbonProjects from "./pages/CarbonProjects.jsx";
 import Reports from "./pages/Reports.jsx";
 import AuditLogs from "./pages/AuditLogs.jsx";
 import FeatureHub from "./pages/FeatureHub.jsx";
+import { ThemeProvider } from "./context/ThemeContext";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export default function App() {
   return (
+    <ThemeProvider>
     <Routes>
-      {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* Existing Protected Routes */}
       <Route
         path="/dashboard"
         element={
@@ -118,8 +61,6 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-
-      {/* New Carbon Management Hub */}
       <Route
         path="/carbon-management"
         element={
@@ -129,7 +70,6 @@ export default function App() {
         }
       />
 
-      {/* Carbon Targets */}
       <Route
         path="/carbon-targets"
         element={
@@ -139,7 +79,6 @@ export default function App() {
         }
       />
 
-      {/* Carbon Score */}
       <Route
         path="/carbon-score"
         element={
@@ -149,7 +88,6 @@ export default function App() {
         }
       />
 
-      {/* Alerts */}
       <Route
         path="/alerts"
         element={
@@ -159,7 +97,6 @@ export default function App() {
         }
       />
 
-      {/* Forecast */}
       <Route
         path="/forecast"
         element={
@@ -169,7 +106,6 @@ export default function App() {
         }
       />
 
-      {/* Carbon Advisor */}
       <Route
         path="/carbon-advisor"
         element={
@@ -179,7 +115,6 @@ export default function App() {
         }
       />
 
-      {/* Carbon Projects */}
       <Route
         path="/carbon-projects"
         element={
@@ -189,7 +124,6 @@ export default function App() {
         }
       />
 
-      {/* Reports */}
       <Route
         path="/reports"
         element={
@@ -199,7 +133,6 @@ export default function App() {
         }
       />
 
-      {/* Audit Logs */}
       <Route
         path="/audit-logs"
         element={
@@ -209,17 +142,16 @@ export default function App() {
         }
       />
 
-      {/* Default */}
       <Route
         path="/"
         element={<Navigate to="/dashboard" replace />}
       />
 
-      {/* Unknown route */}
       <Route
         path="*"
         element={<Navigate to="/dashboard" replace />}
       />
     </Routes>
+    </ThemeProvider>
   );
 }

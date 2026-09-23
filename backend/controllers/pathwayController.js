@@ -2,10 +2,6 @@ import Mine from "../models/Mine.js";
 import EmissionRecord from "../models/EmissionRecord.js";
 import { projectNeutralityPathway } from "../utils/emissionCalculator.js";
 
-// POST /api/pathway/:mineId
-// Body can override any of: targetRenewablePercent, renewableRampYears,
-// afforestationHectares, offsetTonnesCO2ePerHectarePerYear,
-// annualEfficiencyGainPercent, years
 export const getPathway = async (req, res) => {
   try {
     const mine = await Mine.findById(req.params.mineId);

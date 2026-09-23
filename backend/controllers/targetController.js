@@ -1,9 +1,19 @@
 import CarbonTarget from "../models/CarbonTarget.js";
 import EmissionRecord from "../models/EmissionRecord.js";
+import Mine from "../models/Mine.js";
 
 export const getTargets = async (req, res) => {
   try {
-    const filter = req.query.mine ? { mine: req.query.mine } : {};
+
+     let filter = {};
+     if (req.query.mine) {
+      const mineDoc = await Mine.findOne({ name: req.query.mine });
+      if (!mineDoc) {
+        return res.json([]); 
+      }
+      filter = { mine: mineDoc._id };
+    }
+
     const targets = await CarbonTarget.find(filter)
       .populate("mine", "name code state")
       .sort({ year: 1 });
@@ -16,7 +26,6 @@ export const getTargets = async (req, res) => {
     });
   }
 };
-
 export const createTarget = async (req, res) => {
   try {
     const {
@@ -34,11 +43,16 @@ export const createTarget = async (req, res) => {
       });
     }
 
+    const mineDoc = await Mine.findOne({ name: mine });
+    if (!mineDoc) {
+      return res.status(404).json({ message: "Mine not found" });
+    }
+
     const baseline = Number(baselineTonnesCO2e || 0);
     const reduction = Number(targetReductionPercent || 0);
 
     const target = await CarbonTarget.create({
-      mine,
+      mine: mineDoc._id,
       year,
       baselineTonnesCO2e: baseline,
       targetReductionPercent: reduction,

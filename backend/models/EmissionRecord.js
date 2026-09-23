@@ -11,9 +11,7 @@ const emissionRecordSchema = new mongoose.Schema(
     period: {
       type: String,
       required: true,
-    }, // e.g. "2026-08" (YYYY-MM)
-
-    // --- Raw activity data (inputs) ---
+    }, 
     dieselLitres: {
       type: Number,
       default: 0,
@@ -42,9 +40,7 @@ const emissionRecordSchema = new mongoose.Schema(
     coalTransportedTonneKm: {
       type: Number,
       default: 0,
-    }, // tonnes * km for Scope 3
-
-    // --- Computed outputs (filled by emissionCalculator before save) ---
+    }, 
     scope1TonnesCO2e: {
       type: Number,
       default: 0,

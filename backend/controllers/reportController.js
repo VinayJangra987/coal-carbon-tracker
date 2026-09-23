@@ -1,4 +1,5 @@
 import Report from "../models/Report.js";
+import Mine from "../models/Mine.js";
 import { buildMineReport } from "../utils/reportGenerator.js";
 
 export const generateReport = async (req, res) => {
@@ -9,8 +10,13 @@ export const generateReport = async (req, res) => {
       return res.status(400).json({ message: "mine is required" });
     }
 
+    const mineDoc = await Mine.findOne({ name: mine });
+    if (!mineDoc) {
+      return res.status(404).json({ message: "Mine not found" });
+    }
+
     const snapshot = await buildMineReport({
-      mineId: mine,
+      mineId: mineDoc._id,
       periodFrom,
       periodTo,
     });
@@ -19,7 +25,7 @@ export const generateReport = async (req, res) => {
 
     if (save !== false) {
       savedReport = await Report.create({
-        mine,
+        mine: mineDoc._id,
         type: type || "monthly",
         periodFrom,
         periodTo,
@@ -42,7 +48,15 @@ export const generateReport = async (req, res) => {
 
 export const getReports = async (req, res) => {
   try {
-    const filter = req.query.mine ? { mine: req.query.mine } : {};
+    let filter = {};
+
+    if (req.query.mine) {
+      const mineDoc = await Mine.findOne({ name: req.query.mine });
+      if (!mineDoc) {
+        return res.json([]); 
+      }
+      filter = { mine: mineDoc._id };
+    }
 
     const reports = await Report.find(filter)
       .populate("mine", "name code")

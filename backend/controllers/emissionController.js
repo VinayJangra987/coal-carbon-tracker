@@ -2,7 +2,6 @@ import EmissionRecord from "../models/EmissionRecord.js";
 import Mine from "../models/Mine.js";
 import { calculateEmissions } from "../utils/emissionCalculator.js";
 
-// GET /api/emissions?mine=<id>
 export const getEmissions = async (req, res) => {
   try {
     const filter = {};
@@ -24,7 +23,6 @@ export const getEmissions = async (req, res) => {
   }
 };
 
-// POST /api/emissions
 export const createEmission = async (req, res) => {
   try {
     const mine = await Mine.findById(req.body.mine);
@@ -58,7 +56,6 @@ export const createEmission = async (req, res) => {
   }
 };
 
-// PUT /api/emissions/:id
 export const updateEmission = async (req, res) => {
   try {
     const existing = await EmissionRecord.findById(req.params.id)
@@ -93,7 +90,6 @@ export const updateEmission = async (req, res) => {
   }
 };
 
-// DELETE /api/emissions/:id
 export const deleteEmission = async (req, res) => {
   try {
     const record = await EmissionRecord.findByIdAndDelete(

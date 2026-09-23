@@ -10,8 +10,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["mine_admin", "moc_admin"],
       default: "mine_admin",
-    },
-    // If role is mine_admin, this links the user to the mine they manage
+    },  
     mine: { type: mongoose.Schema.Types.ObjectId, ref: "Mine", default: null },
   },
   { timestamps: true }

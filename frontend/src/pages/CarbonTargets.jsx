@@ -63,7 +63,7 @@ export default function CarbonTargets() {
         <Input
           value={mine}
           onChange={setMine}
-          placeholder="Mine ID"
+          placeholder="Mine Name"
           required
         />
 

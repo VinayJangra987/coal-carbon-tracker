@@ -1,8 +1,5 @@
-// backend/controllers/mineController.js
-
 import Mine from "../models/Mine.js";
 
-// GET /api/mines
 export const getMines = async (req, res) => {
   try {
     const mines = await Mine.find().sort({ name: 1 });
@@ -16,7 +13,6 @@ export const getMines = async (req, res) => {
   }
 };
 
-// GET /api/mines/:id
 export const getMine = async (req, res) => {
   try {
     const mine = await Mine.findById(req.params.id);
@@ -36,7 +32,6 @@ export const getMine = async (req, res) => {
   }
 };
 
-// POST /api/mines (moc_admin only)
 export const createMine = async (req, res) => {
   try {
     const mine = await Mine.create(req.body);
@@ -50,7 +45,6 @@ export const createMine = async (req, res) => {
   }
 };
 
-// PUT /api/mines/:id (moc_admin only)
 export const updateMine = async (req, res) => {
   try {
     const mine = await Mine.findByIdAndUpdate(
@@ -77,7 +71,6 @@ export const updateMine = async (req, res) => {
   }
 };
 
-// DELETE /api/mines/:id (moc_admin only)
 export const deleteMine = async (req, res) => {
   try {
     const mine = await Mine.findByIdAndDelete(req.params.id);

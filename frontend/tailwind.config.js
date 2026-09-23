@@ -1,19 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        anthracite: "#14181C",
-        seam: "#0F1215",
-        panel: "#1B2126",
-        ember: "#E8964A",
+        anthracite: "var(--color-anthracite)",
+        seam: "var(--color-seam)",
+        panel: "var(--color-panel)",
+        ember: "var(--color-ember)",
         emberDeep: "#C97430",
-        neutral: "#4F9D69",
+        neutral: "var(--color-neutral)",
         neutralDeep: "#3C7B51",
-        ash: "#8B95A1",
-        chalk: "#EDEFF2",
-        line: "#2A3138",
+        ash: "var(--color-ash)",
+        chalk: "var(--color-chalk)",
+        line: "var(--color-line)",
       },
       fontFamily: {
         display: ["'Space Grotesk'", "sans-serif"],

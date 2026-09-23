@@ -1,8 +1,5 @@
 import Mine from "../models/Mine.js";
 import EmissionRecord from "../models/EmissionRecord.js";
-
-// GET /api/dashboard/summary
-// Ministry-of-Coal-level aggregated view across all mines
 export const getSummary = async (req, res) => {
   try {
     const totalMines = await Mine.countDocuments();

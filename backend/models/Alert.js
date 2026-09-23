@@ -7,6 +7,7 @@ const alertSchema = new mongoose.Schema(
       ref: "Mine",
       required: true,
     },
+    
     type: {
       type: String,
       enum: [

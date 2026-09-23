@@ -18,7 +18,6 @@ const sanitize = (user) => ({
   mine: user.mine,
 });
 
-// POST /api/auth/register new user
 export const register = async (req, res) => {
   try {
     const { name, email, password, role, mine } = req.body;
@@ -60,7 +59,6 @@ export const register = async (req, res) => {
   }
 };
 
-// POST /api/auth/login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -97,7 +95,7 @@ export const login = async (req, res) => {
   }
 };
 
-// GET /api/auth/me
+
 export const getMe = async (req, res) => {
   res.json({
     user: sanitize(req.user),
